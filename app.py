@@ -9,26 +9,29 @@ from routes.main import main_bp
 import os
 from dotenv import load_dotenv
 
-# Load environment variables
+# Cargar variables de entorno
 load_dotenv()
 
 def create_app():
+    print("⏳ Iniciando creación de la app Flask...")
+
     app = Flask(__name__)
-    
+
     try:
-        # Configuración
+        # Configuración básica
         app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///tutoring.db')
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         app.config['UPLOAD_FOLDER'] = 'static/uploads/profile_pics'
 
-        # Crear carpeta si no existe
+        # Crear carpeta de carga si no existe
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
         # Inicializar extensiones
         db.init_app(app)
         login_manager.init_app(app)
 
+        # Configurar login manager
         @login_manager.user_loader
         def load_user(user_id):
             return User.query.get(int(user_id))
@@ -45,7 +48,7 @@ def create_app():
         def ping():
             return 'pong'
 
-        # Crear tablas
+        # Crear las tablas si no existen
         with app.app_context():
             db.create_all()
 
@@ -55,3 +58,7 @@ def create_app():
         print("❌ ERROR al iniciar Flask:", e)
 
     return app
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True)
