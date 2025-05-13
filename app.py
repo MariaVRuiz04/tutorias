@@ -15,7 +15,9 @@ load_dotenv()
 def create_app():
     print("⏳ Iniciando creación de la app Flask...")
 
-    app = Flask(__name__)
+    # Inicialización directa para Render
+    app = create_app()
+
 
     try:
         # Configuración básica
@@ -62,3 +64,7 @@ def create_app():
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True)
+
+...
+
+app = create_app()  # <- necesario para gunicorn app:app
