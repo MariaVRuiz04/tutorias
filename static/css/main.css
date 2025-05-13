@@ -1,0 +1,378 @@
+:root {
+    --primary: #3B82F6;
+    --primary-dark: #2563EB;
+    --primary-light: #93C5FD;
+    --secondary: #6B7280;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --light: #F3F4F6;
+    --dark: #1F2937;
+    --white: #FFFFFF;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Necesario para usar el pseudo-elemento */
+    z-index: 0; /* Asegura que el contenido esté encima */
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(https://www.ucatolica.edu.co/portal/wp-content/uploads/2021/08/Sede_4_Acreditacio%CC%81n.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: rgba(0, 0, 0, 0.5); /* Negro semitransparente */
+    background-blend-mode: overlay; /* Mezcla la imagen con el color negro */
+    z-index: -1; /* Asegura que esté detrás del contenido */
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: Arial, Helvetica, sans-serif; border: #111827;;
+    font-weight: 600;
+    color: #E5E7EB;
+}
+
+/* Navigation Styles */
+.navbar {
+    background-color: var(--primary);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.navbar-brand {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--white);
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.notification-badge {
+    position: relative;
+    top: -8px;
+    right: 2px;
+    font-size: 0.6rem;
+    padding: 0.25rem 0.4rem;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 3rem 0;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.hero-section h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.hero-section .img-fluid {
+    transition: transform 0.3s ease;
+}
+
+.hero-section .img-fluid:hover {
+    transform: scale(1.02);
+}
+
+/* Features Section */
+.features-section {
+    margin: 4rem 0;
+}
+
+.feature-card {
+    height: 100%;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    background-color: var(--white);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    background-color: var(--primary-light);
+    color: var(--primary);
+    font-size: 1.5rem;
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+}
+
+/* Steps section */
+.steps-container {
+    position: relative;
+    padding-left: 2.5rem;
+}
+
+.step-item {
+    position: relative;
+    padding-bottom: 2rem;
+}
+
+.step-item:last-child {
+    padding-bottom: 0;
+}
+
+.step-item::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 2rem;
+    height: calc(100% - 1rem);
+    width: 2px;
+    background-color: var(--primary-light);
+}
+
+.step-item:last-child::before {
+    display: none;
+}
+
+.step-number {
+    position: absolute;
+    left: -2.5rem;
+    top: 0;
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--primary);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+/* Professor Dashboard styles */
+.stats-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    color: var(--white);
+    font-size: 1.25rem;
+    border-radius: 0.5rem;
+}
+
+.activity-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--white);
+    font-size: 1rem;
+    border-radius: 50%;
+}
+
+.notification-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--white);
+    font-size: 1rem;
+    border-radius: 50%;
+}
+
+/* Professor card styles */
+.professor-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.professor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.professor-img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+}
+
+/* Profile picture styles */
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.profile-pic:hover {
+    transform: scale(1.05);
+}
+
+/* Forms styling */
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.btn-outline-primary {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* Footer styles */
+.footer {
+    background-color: var(--gray-800);
+    color: var(--gray-300);
+    padding: 3rem 0 1.5rem;
+    margin-top: auto;
+}
+
+.footer h5 {
+    color: var(--white);
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+}
+
+.footer a {
+    color: var(--gray-300);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer a:hover {
+    color: var(--white);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-section {
+        text-align: center;
+    }
+    
+    .hero-section .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .feature-card {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card, .alert {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Tab navigation styling */
+.nav-tabs .nav-link {
+    color: var(--light);
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-bottom: 3px snow;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: transparent;
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.nav-tabs .nav-link:hover:not(.active) {
+    border-color: var(--gray-100);
+}
+
+/* Card hover effects */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+}

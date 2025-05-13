@@ -1,0 +1,247 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="tutoring-requests">
+    <h1 class="mb-4">Tutoring Requests</h1>
+    
+    <ul class="nav nav-tabs mb-4" id="requestTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">
+                Pending
+                {% if pending|length > 0 %}
+                    <span class="badge bg-danger ms-1">{{ pending|length }}</span>
+                {% endif %}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="accepted-tab" data-bs-toggle="tab" data-bs-target="#accepted" type="button" role="tab" aria-controls="accepted" aria-selected="false">
+                Accepted
+                {% if accepted|length > 0 %}
+                    <span class="badge bg-success ms-1">{{ accepted|length }}</span>
+                {% endif %}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab" aria-controls="completed" aria-selected="false">
+                Completed
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab" aria-controls="rejected" aria-selected="false">
+                Declined
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content" id="requestTabsContent">
+        <!-- Pending Requests Tab -->
+        <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+            {% if pending %}
+                <div class="row">
+                    {% for request in pending %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header bg-warning bg-opacity-25">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">{{ request.subject }}</h5>
+                                        <span class="badge bg-warning">Pending</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <p class="mb-1"><strong>Student:</strong> {{ request.student.first_name }} {{ request.student.last_name }}</p>
+                                        <p class="mb-1">
+                                            <strong>Date:</strong> {{ request.requested_date.strftime('%b %d, %Y') }}
+                                        </p>
+                                        <p class="mb-0">
+                                            <strong>Time:</strong> {{ request.requested_time.strftime('%I:%M %p') }}
+                                        </p>
+                                    </div>
+                                    
+                                    {% if request.message %}
+                                        <div class="mb-3">
+                                            <p class="mb-1"><strong>Message:</strong></p>
+                                            <div class="p-2 bg-light rounded">
+                                                {{ request.message }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="text-end">
+                                        <a href="{{ url_for('professor.update_tutoring_request', request_id=request.id) }}" class="btn btn-primary">
+                                            Review Request
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    <small>Requested {{ request.created_at.strftime('%b %d, %Y at %I:%M %p') }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-check-circle fa-4x text-muted mb-3"></i>
+                    <h3>No Pending Requests</h3>
+                    <p class="text-muted">You don't have any pending tutoring requests at this time.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Accepted Requests Tab -->
+        <div class="tab-pane fade" id="accepted" role="tabpanel" aria-labelledby="accepted-tab">
+            {% if accepted %}
+                <div class="row">
+                    {% for request in accepted %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header bg-success bg-opacity-25">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">{{ request.subject }}</h5>
+                                        <span class="badge bg-success">Accepted</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <p class="mb-1"><strong>Student:</strong> {{ request.student.first_name }} {{ request.student.last_name }}</p>
+                                        <p class="mb-1">
+                                            <strong>Date:</strong> {{ request.requested_date.strftime('%b %d, %Y') }}
+                                        </p>
+                                        <p class="mb-0">
+                                            <strong>Time:</strong> {{ request.requested_time.strftime('%I:%M %p') }}
+                                        </p>
+                                    </div>
+                                    
+                                    {% if request.message %}
+                                        <div class="mb-3">
+                                            <p class="mb-1"><strong>Message:</strong></p>
+                                            <div class="p-2 bg-light rounded">
+                                                {{ request.message }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="text-end">
+                                        <a href="{{ url_for('professor.update_tutoring_request', request_id=request.id) }}" class="btn btn-outline-success">
+                                            Mark Completed
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    <small>Accepted on {{ request.updated_at.strftime('%b %d, %Y') }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                    <h3>No Accepted Sessions</h3>
+                    <p class="text-muted">You don't have any upcoming tutoring sessions.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Completed Requests Tab -->
+        <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+            {% if completed %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Student</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Completed On</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in completed %}
+                                <tr>
+                                    <td>{{ request.subject }}</td>
+                                    <td>{{ request.student.first_name }} {{ request.student.last_name }}</td>
+                                    <td>{{ request.requested_date.strftime('%b %d, %Y') }}</td>
+                                    <td>{{ request.requested_time.strftime('%I:%M %p') }}</td>
+                                    <td>{{ request.updated_at.strftime('%b %d, %Y') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('professor.update_tutoring_request', request_id=request.id) }}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-tasks fa-4x text-muted mb-3"></i>
+                    <h3>No Completed Sessions</h3>
+                    <p class="text-muted">You don't have any completed tutoring sessions yet.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Rejected Requests Tab -->
+        <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
+            {% if rejected %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Student</th>
+                                <th>Requested Date</th>
+                                <th>Requested Time</th>
+                                <th>Declined On</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in rejected %}
+                                <tr>
+                                    <td>{{ request.subject }}</td>
+                                    <td>{{ request.student.first_name }} {{ request.student.last_name }}</td>
+                                    <td>{{ request.requested_date.strftime('%b %d, %Y') }}</td>
+                                    <td>{{ request.requested_time.strftime('%I:%M %p') }}</td>
+                                    <td>{{ request.updated_at.strftime('%b %d, %Y') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('professor.update_tutoring_request', request_id=request.id) }}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-ban fa-4x text-muted mb-3"></i>
+                    <h3>No Declined Requests</h3>
+                    <p class="text-muted">You haven't declined any tutoring requests.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Activate tab based on hash in URL
+    document.addEventListener('DOMContentLoaded', function() {
+        const hash = window.location.hash;
+        if (hash) {
+            const tab = document.querySelector(`[data-bs-target="${hash}"]`);
+            if (tab) {
+                new bootstrap.Tab(tab).show();
+            }
+        }
+    });
+</script>
+{% endblock %}

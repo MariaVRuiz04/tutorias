@@ -1,0 +1,272 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="professor-dashboard">
+    <h1 class="mb-4">Professor Dashboard</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-4 mb-4 mb-md-0">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="stats-icon bg-primary me-3">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div>
+                            <h2 class="h5 mb-0">Availability Slots</h2>
+                            <small class="text-muted">Your scheduled time slots</small>
+                        </div>
+                    </div>
+                    <h3 class="h2 mb-3">{{ availability|length }}</h3>
+                    <a href="{{ url_for('professor.manage_availability') }}" class="btn btn-sm btn-outline-primary">
+                        Manage Schedule
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4 mb-md-0">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="stats-icon bg-warning me-3">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <h2 class="h5 mb-0">Pending Requests</h2>
+                            <small class="text-muted">Awaiting your response</small>
+                        </div>
+                    </div>
+                    <h3 class="h2 mb-3">{{ pending_requests|length }}</h3>
+                    <a href="{{ url_for('professor.tutoring_requests') }}" class="btn btn-sm btn-outline-warning">
+                        View Requests
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="stats-icon bg-success me-3">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div>
+                            <h2 class="h5 mb-0">Upcoming Sessions</h2>
+                            <small class="text-muted">Confirmed tutoring sessions</small>
+                        </div>
+                    </div>
+                    <h3 class="h2 mb-3">{{ upcoming_sessions|length }}</h3>
+                    <a href="{{ url_for('professor.tutoring_requests') + '#accepted-tab' }}" class="btn btn-sm btn-outline-success">
+                        View Schedule
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-7 mb-4 mb-lg-0">
+            <!-- Upcoming Sessions -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0"><i class="fas fa-calendar-day me-2"></i>Upcoming Tutoring Sessions</h2>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_sessions %}
+                        <div class="list-group list-group-flush">
+                            {% for session in upcoming_sessions[:5] %}
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h3 class="h6 mb-1">{{ session.subject }}</h3>
+                                            <p class="mb-1">
+                                                <i class="fas fa-user me-1 text-muted"></i>
+                                                {{ session.student.first_name }} {{ session.student.last_name }}
+                                            </p>
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                {{ session.requested_date.strftime('%b %d, %Y') }}
+                                                <i class="fas fa-clock ms-2 me-1"></i>
+                                                {{ session.requested_time.strftime('%I:%M %p') }}
+                                            </small>
+                                        </div>
+                                        <a href="{{ url_for('professor.update_tutoring_request', request_id=session.id) }}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if upcoming_sessions|length > 5 %}
+                            <div class="text-center mt-3">
+                                <a href="{{ url_for('professor.tutoring_requests') + '#accepted-tab' }}" class="btn btn-sm btn-outline-primary">
+                                    View All Sessions
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <p>You don't have any upcoming tutoring sessions.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h2 class="h5 mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h2>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% if pending_requests or upcoming_sessions %}
+                            {% set combined_activities = (pending_requests + upcoming_sessions)|sort(attribute='created_at', reverse=True) %}
+                            {% for activity in combined_activities[:5] %}
+                                <div class="list-group-item">
+                                    <div class="d-flex">
+                                        <div class="activity-icon 
+                                            {% if activity.status == 'pending' %}bg-warning
+                                            {% elif activity.status == 'accepted' %}bg-success
+                                            {% else %}bg-secondary{% endif %} me-3">
+                                            {% if activity.status == 'pending' %}
+                                                <i class="fas fa-clock"></i>
+                                            {% elif activity.status == 'accepted' %}
+                                                <i class="fas fa-check"></i>
+                                            {% else %}
+                                                <i class="fas fa-info"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <p class="mb-1">
+                                                {% if activity.status == 'pending' %}
+                                                    New tutoring request from <strong>{{ activity.student.first_name }} {{ activity.student.last_name }}</strong>
+                                                {% elif activity.status == 'accepted' %}
+                                                    You accepted a tutoring request for <strong>{{ activity.subject }}</strong>
+                                                {% else %}
+                                                    Activity update
+                                                {% endif %}
+                                            </p>
+                                            <small class="text-muted">{{ activity.created_at.strftime('%b %d, %Y, %I:%M %p') }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                                <p>No recent activity to display.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <!-- Pending Requests -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0"><i class="fas fa-bell me-2"></i>Pending Requests</h2>
+                </div>
+                <div class="card-body">
+                    {% if pending_requests %}
+                        <div class="list-group list-group-flush">
+                            {% for request in pending_requests[:5] %}
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h3 class="h6 mb-1">{{ request.subject }}</h3>
+                                            <p class="mb-1">From: {{ request.student.first_name }} {{ request.student.last_name }}</p>
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                {{ request.requested_date.strftime('%b %d, %Y') }}
+                                                <i class="fas fa-clock ms-2 me-1"></i>
+                                                {{ request.requested_time.strftime('%I:%M %p') }}
+                                            </small>
+                                        </div>
+                                        <div>
+                                            <a href="{{ url_for('professor.update_tutoring_request', request_id=request.id) }}" class="btn btn-sm btn-outline-primary">
+                                                Review
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if pending_requests|length > 5 %}
+                            <div class="text-center mt-3">
+                                <a href="{{ url_for('professor.tutoring_requests') }}" class="btn btn-sm btn-outline-primary">
+                                    View All Requests
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-check-circle fa-3x text-muted mb-3"></i>
+                            <p>You don't have any pending requests.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Your Availability -->
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0"><i class="fas fa-calendar-alt me-2"></i>Your Availability</h2>
+                    <a href="{{ url_for('professor.manage_availability') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus me-1"></i>Add Slot
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if availability %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Time</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for slot in availability %}
+                                        <tr>
+                                            <td>
+                                                {% if slot.is_recurring %}
+                                                    {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+                                                    {{ days[slot.day_of_week] }}
+                                                {% else %}
+                                                    {{ slot.specific_date.strftime('%b %d, %Y') }}
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ slot.start_time.strftime('%I:%M %p') }} - {{ slot.end_time.strftime('%I:%M %p') }}</td>
+                                            <td>
+                                                {% if slot.is_recurring %}
+                                                    <span class="badge bg-info">Weekly</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">One-time</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <p>You haven't set any availability yet.</p>
+                            <a href="{{ url_for('professor.manage_availability') }}" class="btn btn-outline-primary">
+                                Set Availability
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

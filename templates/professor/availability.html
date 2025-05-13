@@ -1,0 +1,170 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="availability-management">
+    <h1 class="mb-4">Manage Availability</h1>
+    
+    <div class="row">
+        <div class="col-lg-5 mb-4 mb-lg-0">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0"><i class="fas fa-plus-circle me-2"></i>Add Availability</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.day_of_week.label(class="form-label") }}
+                            {% if form.day_of_week.errors %}
+                                {{ form.day_of_week(class="form-select is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.day_of_week.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.day_of_week(class="form-select") }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                {{ form.start_time.label(class="form-label") }}
+                                {% if form.start_time.errors %}
+                                    {{ form.start_time(class="form-control is-invalid", type="time") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.start_time.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.start_time(class="form-control", type="time") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.end_time.label(class="form-label") }}
+                                {% if form.end_time.errors %}
+                                    {{ form.end_time(class="form-control is-invalid", type="time") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.end_time.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.end_time(class="form-control", type="time") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            {{ form.is_recurring(class="form-check-input") }}
+                            {{ form.is_recurring.label(class="form-check-label") }}
+                        </div>
+                        
+                        <div class="mb-3" id="specific_date_div">
+                            {{ form.specific_date.label(class="form-label") }}
+                            {% if form.specific_date.errors %}
+                                {{ form.specific_date(class="form-control is-invalid", type="date") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.specific_date.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.specific_date(class="form-control", type="date") }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h2 class="h5 mb-0"><i class="fas fa-calendar-alt me-2"></i>Current Availability</h2>
+                </div>
+                <div class="card-body">
+                    {% if availabilities %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Day/Date</th>
+                                        <th>Time</th>
+                                        <th>Type</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for availability in availabilities %}
+                                        <tr>
+                                            <td>
+                                                {% if availability.is_recurring %}
+                                                    {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+                                                    {{ days[availability.day_of_week] }}
+                                                {% else %}
+                                                    {{ availability.specific_date.strftime('%b %d, %Y') }}
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ availability.start_time.strftime('%I:%M %p') }} - {{ availability.end_time.strftime('%I:%M %p') }}</td>
+                                            <td>
+                                                {% if availability.is_recurring %}
+                                                    <span class="badge bg-info">Weekly</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">One-time</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <form action="{{ url_for('professor.delete_availability', availability_id=availability.id) }}" method="POST" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this availability slot?')">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <p>You haven't set any availability yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Toggle specific date field based on recurring checkbox
+    document.addEventListener('DOMContentLoaded', function() {
+        const isRecurringCheckbox = document.getElementById('is_recurring');
+        const specificDateDiv = document.getElementById('specific_date_div');
+        
+        function toggleSpecificDate() {
+            if (isRecurringCheckbox.checked) {
+                specificDateDiv.style.display = 'none';
+            } else {
+                specificDateDiv.style.display = 'block';
+            }
+        }
+        
+        // Initial state
+        toggleSpecificDate();
+        
+        // Listen for changes
+        isRecurringCheckbox.addEventListener('change', toggleSpecificDate);
+    });
+</script>
+{% endblock %}

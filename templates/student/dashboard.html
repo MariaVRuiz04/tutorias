@@ -1,0 +1,223 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="student-dashboard">
+    <h1 class="mb-4">Student Dashboard</h1>
+    
+    {% if notifications %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-bell fa-lg me-3"></i>
+                <div>
+                    <strong>New notifications!</strong> 
+                    You have {{ notifications|length }} unread notification{% if notifications|length > 1 %}s{% endif %}.
+                    <a href="{{ url_for('student.notifications') }}" class="alert-link ms-2">View all</a>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+    
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4 mb-lg-0">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0"><i class="fas fa-chalkboard-teacher me-2"></i>Find Professors</h2>
+                </div>
+                <div class="card-body">
+                    <p>Browse through our list of professors and request tutoring sessions based on your needs.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('student.view_professors') }}" class="btn btn-primary">View Professors</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0"><i class="fas fa-clipboard-list me-2"></i>My Tutoring Requests</h2>
+                </div>
+                <div class="card-body">
+                    <p>View and manage all your tutoring requests in one place.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('student.tutoring_requests') }}" class="btn btn-primary">View My Requests</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-7 mb-4 mb-lg-0">
+            <!-- Upcoming Sessions -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0"><i class="fas fa-calendar-day me-2"></i>Upcoming Tutoring Sessions</h2>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_sessions %}
+                        <div class="list-group list-group-flush">
+                            {% for session in upcoming_sessions %}
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h3 class="h6 mb-1">{{ session.subject }}</h3>
+                                            <p class="mb-1">
+                                                <i class="fas fa-user-tie me-1 text-muted"></i>
+                                                Professor {{ session.professor.first_name }} {{ session.professor.last_name }}
+                                            </p>
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                {{ session.requested_date.strftime('%A, %b %d, %Y') }}
+                                                <i class="fas fa-clock ms-2 me-1"></i>
+                                                {{ session.requested_time.strftime('%I:%M %p') }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <p>You don't have any upcoming tutoring sessions.</p>
+                            <a href="{{ url_for('student.view_professors') }}" class="btn btn-outline-primary">
+                                Find a Professor
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h2 class="h5 mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h2>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% if pending_requests or upcoming_sessions or notifications %}
+                            {% set combined_activities = (pending_requests + upcoming_sessions + notifications)|sort(attribute='created_at', reverse=True) %}
+                            {% for activity in combined_activities[:5] %}
+                                <div class="list-group-item">
+                                    <div class="d-flex">
+                                        <div class="activity-icon 
+                                            {% if activity.__tablename__ == 'notifications' %}bg-info
+                                            {% elif activity.status == 'pending' %}bg-warning
+                                            {% elif activity.status == 'accepted' %}bg-success
+                                            {% else %}bg-secondary{% endif %} me-3">
+                                            {% if activity.__tablename__ == 'notifications' %}
+                                                <i class="fas fa-bell"></i>
+                                            {% elif activity.status == 'pending' %}
+                                                <i class="fas fa-clock"></i>
+                                            {% elif activity.status == 'accepted' %}
+                                                <i class="fas fa-check"></i>
+                                            {% else %}
+                                                <i class="fas fa-info"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <p class="mb-1">
+                                                {% if activity.__tablename__ == 'notifications' %}
+                                                    {{ activity.message }}
+                                                {% elif activity.status == 'pending' %}
+                                                    You requested tutoring with <strong>Professor {{ activity.professor.first_name }} {{ activity.professor.last_name }}</strong> for <strong>{{ activity.subject }}</strong>
+                                                {% elif activity.status == 'accepted' %}
+                                                    Your tutoring request for <strong>{{ activity.subject }}</strong> was accepted
+                                                {% else %}
+                                                    Activity update
+                                                {% endif %}
+                                            </p>
+                                            <small class="text-muted">{{ activity.created_at.strftime('%b %d, %Y, %I:%M %p') }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                                <p>No recent activity to display.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <!-- Pending Requests -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0"><i class="fas fa-hourglass-half me-2"></i>Pending Requests</h2>
+                </div>
+                <div class="card-body">
+                    {% if pending_requests %}
+                        <div class="list-group list-group-flush">
+                            {% for request in pending_requests %}
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h3 class="h6 mb-1">{{ request.subject }}</h3>
+                                            <p class="mb-1">
+                                                <i class="fas fa-user-tie me-1 text-muted"></i>
+                                                Professor {{ request.professor.first_name }} {{ request.professor.last_name }}
+                                            </p>
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                {{ request.requested_date.strftime('%b %d, %Y') }}
+                                                <i class="fas fa-clock ms-2 me-1"></i>
+                                                {{ request.requested_time.strftime('%I:%M %p') }}
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-warning">Pending</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-check-circle fa-3x text-muted mb-3"></i>
+                            <p>You don't have any pending requests.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Notifications Preview -->
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0"><i class="fas fa-bell me-2"></i>Recent Notifications</h2>
+                    <a href="{{ url_for('student.notifications') }}" class="btn btn-sm btn-primary">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if notifications %}
+                        <div class="list-group list-group-flush">
+                            {% for notification in notifications[:3] %}
+                                <div class="list-group-item px-0">
+                                    <p class="mb-1">{{ notification.message }}</p>
+                                    <small class="text-muted">{{ notification.created_at.strftime('%b %d, %Y, %I:%M %p') }}</small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if notifications|length > 3 %}
+                            <div class="text-center mt-3">
+                                <a href="{{ url_for('student.notifications') }}" class="btn btn-sm btn-outline-primary">
+                                    See all notifications
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                            <p>You don't have any notifications.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

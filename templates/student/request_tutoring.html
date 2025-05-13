@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="request-tutoring">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h4 mb-0"><i class="fas fa-calendar-plus me-2"></i>Request Tutoring Session</h2>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <img src="{{ url_for('static', filename='uploads/profile_pics/' + professor.profile_pic) }}" 
+                             alt="Profile Picture" class="rounded-circle me-3" style="width: 64px; height: 64px; object-fit: cover;">
+                        <div>
+                            <h3 class="h5 mb-1">Prof. {{ professor.first_name }} {{ professor.last_name }}</h3>
+                            <p class="mb-0 text-muted">{{ professor.email }}</p>
+                        </div>
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.subject.label(class="form-label") }}
+                            {% if form.subject.errors %}
+                                {{ form.subject(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.subject.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.subject(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                {{ form.requested_date.label(class="form-label") }}
+                                {% if form.requested_date.errors %}
+                                    {{ form.requested_date(class="form-control is-invalid", type="date") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.requested_date.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.requested_date(class="form-control", type="date") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.requested_time.label(class="form-label") }}
+                                {% if form.requested_time.errors %}
+                                    {{ form.requested_time(class="form-control is-invalid", type="time") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.requested_time.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.requested_time(class="form-control", type="time") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.message.label(class="form-label") }}
+                            {% if form.message.errors %}
+                                {{ form.message(class="form-control is-invalid", rows=4) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.message.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.message(class="form-control", rows=4, placeholder="Describe what you need help with...") }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('student.professor_detail', professor_id=professor.id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Profile
+                            </a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

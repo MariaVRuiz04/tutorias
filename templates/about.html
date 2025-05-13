@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="about-section">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4 text-center">About TutoringConnect</h1>
+            
+            <div class="card shadow-sm mb-5">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">Our Mission</h2>
+                    <p class="card-text">
+                        TutoringConnect was founded with a simple mission: to make academic support more accessible, 
+                        personalized, and effective. We believe that every student deserves the opportunity to 
+                        connect with knowledgeable professors who can provide guidance and mentorship beyond the classroom.
+                    </p>
+                    <p class="card-text">
+                        Our platform bridges the gap between students seeking academic support and professors willing 
+                        to share their expertise through personalized tutoring sessions.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row mb-5">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title h4 mb-3">For Students</h2>
+                            <p class="card-text">
+                                TutoringConnect provides students with:
+                            </p>
+                            <ul>
+                                <li>Access to qualified professors across various disciplines</li>
+                                <li>Flexible scheduling options to fit around busy academic schedules</li>
+                                <li>A simple interface to request and manage tutoring sessions</li>
+                                <li>Timely notifications when professors accept requests or open new availability</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title h4 mb-3">For Professors</h2>
+                            <p class="card-text">
+                                TutoringConnect offers professors:
+                            </p>
+                            <ul>
+                                <li>Complete control over availability and scheduling</li>
+                                <li>A dedicated platform to connect with motivated students</li>
+                                <li>Tools to manage multiple tutoring requests efficiently</li>
+                                <li>The opportunity to supplement teaching with one-on-one instruction</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-5">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-3">How We're Different</h2>
+                    <p class="card-text">
+                        Unlike generic tutoring platforms, TutoringConnect is specifically designed for the 
+                        higher education environment, focusing on the unique relationship between university 
+                        professors and students. Our platform prioritizes:
+                    </p>
+                    <ul>
+                        <li><strong>Academic Integrity:</strong> We maintain the professional standards expected in higher education</li>
+                        <li><strong>Simplicity:</strong> Our intuitive interface reduces administrative burden for both parties</li>
+                        <li><strong>Flexibility:</strong> We recognize the dynamic nature of academic schedules</li>
+                        <li><strong>Communication:</strong> Our notification system ensures everyone stays informed</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="text-center mb-5">
+                <h2 class="h4 mb-4">Join Our Community Today</h2>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4">Get Started</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

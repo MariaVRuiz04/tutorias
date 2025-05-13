@@ -1,0 +1,51 @@
+from flask import Flask
+from extensions import db, login_manager
+from models.user import User
+from routes.auth import auth_bp
+from routes.professor import professor_bp
+from routes.student import student_bp
+from routes.profile import profile_bp
+from routes.main import main_bp
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+def create_app():
+    app = Flask(__name__)
+    
+    # Configuration
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///tutoring.db')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['UPLOAD_FOLDER'] = 'static/uploads/profile_pics'
+    
+    # Ensure upload directory exists
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    
+    # Initialize extensions
+    db.init_app(app)
+    login_manager.init_app(app)
+    
+    # Set up user loader
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+    
+    # Register blueprints
+    app.register_blueprint(main_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(professor_bp)
+    app.register_blueprint(student_bp)
+    app.register_blueprint(profile_bp)
+    
+    # Create database tables
+    with app.app_context():
+        db.create_all()
+    
+    return app
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True)

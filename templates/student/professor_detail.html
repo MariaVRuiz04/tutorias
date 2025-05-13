@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="professor-detail">
+    <div class="row">
+        <div class="col-lg-4 mb-4 mb-lg-0">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <img src="{{ url_for('static', filename='uploads/profile_pics/' + professor.profile_pic) }}" 
+                         alt="Profile Picture" class="rounded-circle img-thumbnail mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h1 class="h3 mb-2">Prof. {{ professor.first_name }} {{ professor.last_name }}</h1>
+                    <p class="text-muted mb-3">
+                        <i class="fas fa-envelope me-1"></i>{{ professor.email }}
+                    </p>
+                    <p class="text-muted small">
+                        <i class="fas fa-user-tie me-1"></i>Professor
+                        <br>
+                        <i class="fas fa-calendar-alt me-1"></i>Member since {{ professor.created_at.strftime('%b %Y') }}
+                    </p>
+                    <div class="d-grid">
+                        <a href="{{ url_for('student.request_tutoring', professor_id=professor.id) }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-calendar-plus me-1"></i>Request Tutoring
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h2 class="h5 mb-0"><i class="fas fa-calendar-alt me-2"></i>Availability Schedule</h2>
+                </div>
+                <div class="card-body">
+                    {% if availabilities %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Day/Date</th>
+                                        <th>Time</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for slot in availabilities %}
+                                        <tr>
+                                            <td>
+                                                {% if slot.is_recurring %}
+                                                    {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+                                                    {{ days[slot.day_of_week] }}
+                                                {% else %}
+                                                    {{ slot.specific_date.strftime('%b %d, %Y') }}
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ slot.start_time.strftime('%I:%M %p') }} - {{ slot.end_time.strftime('%I:%M %p') }}</td>
+                                            <td>
+                                                {% if slot.is_recurring %}
+                                                    <span class="badge bg-info">Weekly</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">One-time</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <p>This professor hasn't set any availability yet.</p>
+                            <p class="text-muted small">You can still request tutoring, and they'll be notified of your interest.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between mb-4">
+                <a href="{{ url_for('student.view_professors') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Professors
+                </a>
+                <a href="{{ url_for('student.request_tutoring', professor_id=professor.id) }}" class="btn btn-primary">
+                    <i class="fas fa-calendar-plus me-1"></i>Request Tutoring
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

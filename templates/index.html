@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h1 class="mb-4">Connect with Academic Excellence</h1>
+            <p class="lead mb-4">
+                TutoringConnect is a platform designed to bridge the gap between students and professors, 
+                making it easier than ever to schedule and manage personalized tutoring sessions.
+            </p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 me-md-2">Get Started</a>
+                <a href="{{ url_for('main.about') }}" class="btn btn-outline-secondary btn-lg px-4">Learn More</a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <img src="https://images.pexels.com/photos/4145354/pexels-photo-4145354.jpeg" alt="Student studying" class="img-fluid rounded shadow-lg">
+        </div>
+    </div>
+</div>
+
+<div class="features-section mt-5 py-5">
+    <h2 class="text-center mb-5">Why Choose TutoringConnect?</h2>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>Flexible Scheduling</h3>
+                <p>Professors can set their availability and students can easily request sessions at convenient times.</p>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3>Real-time Notifications</h3>
+                <p>Stay updated with instant notifications about new availability and tutoring request responses.</p>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h3>Secure Profiles</h3>
+                <p>Manage your personal information and academic preferences in a secure environment.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="how-it-works-section my-5 py-5 bg-light rounded">
+    <h2 class="text-center mb-5">How It Works</h2>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="steps-container">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Create Your Profile</h4>
+                        <p>Sign up as a student or professor and complete your profile with relevant information.</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Set Availability (Professors)</h4>
+                        <p>Professors can set their weekly schedule or specific dates when they're available for tutoring.</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Request Sessions (Students)</h4>
+                        <p>Students can browse professors and request tutoring sessions based on their needs.</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Connect and Learn</h4>
+                        <p>Once a session is confirmed, connect with your tutor at the scheduled time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <img src="https://images.pexels.com/photos/5212703/pexels-photo-5212703.jpeg" alt="Online tutoring" class="img-fluid rounded shadow">
+        </div>
+    </div>
+</div>
+
+<div class="cta-section text-center my-5 py-5">
+    <h2 class="mb-4">Ready to Get Started?</h2>
+    <p class="lead mb-4">Join thousands of students and professors already using TutoringConnect</p>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-5 py-3">Sign Up Now</a>
+</div>
+{% endblock %}
