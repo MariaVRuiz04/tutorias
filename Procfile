@@ -1,1 +1,1 @@
-web: gunicorn "pagina web tesis:create_app()"
+web: gunicorn "app.py:create_app()"
