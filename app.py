@@ -67,4 +67,6 @@ if __name__ == '__main__':
 
 ...
 
-app = create_app()  # <- necesario para gunicorn app:app
+# app = create_app()  # <- necesario para gunicorn app:app
+
+
