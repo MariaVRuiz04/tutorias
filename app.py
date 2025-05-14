@@ -16,7 +16,7 @@ def create_app():
     print("⏳ Iniciando creación de la app Flask...")
 
     # Inicialización directa para Render
-    app = create_app()
+    app = Flask(__name__)
 
 
     try:
@@ -45,19 +45,21 @@ def create_app():
         app.register_blueprint(student_bp)
         app.register_blueprint(profile_bp)
 
-        # Ruta de prueba
-        @app.route('/ping')
-        def ping():
-            return 'pong'
+#         # Ruta de prueba
+#         @app.route('/ping')
+#         def ping():
+#             return 'pong'
 
-        # Crear las tablas si no existen
-        with app.app_context():
-            db.create_all()
+#         # Crear las tablas si no existen
+#         with app.app_context():
+#             db.create_all()
 
-        print("✅ Flask app cargada correctamente")
+#         print("✅ Flask app cargada correctamente")
 
     except Exception as e:
         print("❌ ERROR al iniciar Flask:", e)
+
+    print("✅ Flask app cargada correctamente")
 
     return app
 
@@ -67,6 +69,6 @@ if __name__ == '__main__':
 
 ...
 
-app = create_app()  # <- necesario para gunicorn app:app
+app = create_app() 
 
 
