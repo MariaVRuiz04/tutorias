@@ -16,7 +16,7 @@ def create_app():
     print("⏳ Iniciando creación de la app Flask...")
 
     # Inicialización directa para Render
-    # app = create_app()
+    app = create_app()
 
 
     try:
@@ -67,6 +67,6 @@ if __name__ == '__main__':
 
 ...
 
-# app = create_app()  # <- necesario para gunicorn app:app
+app = create_app()  # <- necesario para gunicorn app:app
 
 
