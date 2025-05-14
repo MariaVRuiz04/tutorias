@@ -16,7 +16,7 @@ def create_app():
     print("⏳ Iniciando creación de la app Flask...")
 
     # Inicialización directa para Render
-    app = create_app()
+    # app = create_app()
 
 
     try:
